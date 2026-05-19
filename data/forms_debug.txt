@@ -1,0 +1,260 @@
+
+--- FORM 0 ---
+<form action="AUS_SCHEDULE.main_display1" method="POST" target="_blank">
+<html>
+<head>
+<meta content="IE=EDGE" http-equiv="X-UA-Compatible"/>
+<title>Class Schedule</title>
+<link as="font" crossorigin="anonymous" href="/graphics/css/assets/fonts/icomoon.ttf?pek60p" rel="preload"/>
+<header class="site-header site-header--transparent">
+<div class="site-header__body">
+<div class="container">
+<div class="site-logo"><img alt="NTU Logo" src="/graphics/css/assets/images/ntu-logo-sm.png"/></div>
+</div>
+</div>
+</header>
+<link href="/graphics/css/assets/styles/main.css" rel="stylesheet"/>
+<script language="JavaScript">
+    <!-- Begin
+    function StartNewWin(page) {
+    OpenWin = this.open(page, "CtrlWindow", "toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes");
+    }
+    // End -->
+    </script>
+<style>
+button, input[type=button], input[type=submit], input[type=reset] {
+  background-color: #d71440;
+  border: none;
+  color: white;
+  padding: 10px 10px;
+  text-decoration: none;
+  margin: 2px 2px;
+  cursor: pointer;
+  font: 14px Lato,Helvetica,Arial,sans-serif;
+}
+input[type=button]:hover {
+   background-color: #ea2f59;
+}
+input[type=submit]:hover {
+   background-color: #ea2f59;
+}
+input[type=reset]:hover {
+   background-color: #ea2f59;
+}
+
+</style>
+</head>
+<body onload="window.focus()" topmargin="0">
+<div id="ui_student_header_container">
+<div id="ui_header_title_container">
+<p id="ui_nav_right">
+ 
+</p></div>
+</div>
+<div id="ui_nav_container">
+<div id="ui_nav_innercontainer">
+<p id="ui_nav_left"></p>
+<p id="ui_nav_right">
+</p></div>
+</div>
+<div id="ui_body_container">
+<div id="top">
+<div class="inner-layout">
+<!-- Container Landing Single-->
+<section class="eyd-section">
+<div class="container">
+<h1>Class Schedule</h1>
+<h2>2025,Special Term</h2>
+</div>
+</section>
+<!-- End: Container Landing Single-->
+<!-- Container Detail-->
+<section class="eyd-section">
+<div class="container">
+<!-- Test Content (BE Note: do not include this)-->
+<div style="min-height: 800px; background: #f9f9f9; padding: 10px; color: #333;">
+<p>
+<hr size="2"/>
+<table border="0" cellpadding="0" cellspacing="10">
+<tr><td>
+<td class="smallText2" span="" valign="top" width="350">
+<select name="acadsem" onchange="this.form.action='AUS_SCHEDULE.main_display';this.form.target='_self';this.form.boption.value='x';submit()" style="font-family: Arial; font-size: 10pt; height:35px">
+<option value="2025;2">Acad Yr 2025 Semester 2</option>
+<option value="2025;1">Acad Yr 2025 Semester 1</option>
+<option selected="selected" value="2025;S">Acad Yr 2025 Special Term</option>
+<option value="2024;1">Acad Yr 2024 Semester 1</option>
+<option value="2024;2">Acad Yr 2024 Semester 2</option>
+<option value="2024;S">Acad Yr 2024 Special Term</option>
+<option value="2023;2">Acad Yr 2023 Semester 2</option>
+<option value="2023;1">Acad Yr 2023 Semester 1</option>
+<option value="2023;S">Acad Yr 2023 Special Term</option>
+<option value="2022;2">Acad Yr 2022 Semester 2</option>
+<option value="2022;1">Acad Yr 2022 Semester 1</option>
+<option value="2022;S">Acad Yr 2022 Special Term</option>
+<option value="2021;2">Acad Yr 2021 Semester 2</option>
+<option value="2021;1">Acad Yr 2021 Semester 1</option>
+<option value="2021;S">Acad Yr 2021 Special Term I</option>
+<option value="2021;T">Acad Yr 2021 Special Term II</option>
+<option value="2020;2">Acad Yr 2020 Semester 2</option>
+<option value="2020;1">Acad Yr 2020 Semester 1</option>
+<option value="2020;S">Acad Yr 2020 Special Term I</option>
+<option value="2020;T">Acad Yr 2020 Special Term II</option>
+<option value="2019;2">Acad Yr 2019 Semester 2</option>
+<option value="2019;1">Acad Yr 2019 Semester 1</option>
+<option value="2019;S">Acad Yr 2019 Special Term I</option>
+<option value="2019;T">Acad Yr 2019 Special Term II</option>
+<option value="2018;2">Acad Yr 2018 Semester 2</option>
+<option value="2018;1">Acad Yr 2018 Semester 1</option>
+<option value="2018;S">Acad Yr 2018 Special Term I</option>
+<option value="2018;T">Acad Yr 2018 Special Term II</option>
+<option value="2017;2">Acad Yr 2017 Semester 2</option>
+<option value="2017;1">Acad Yr 2017 Semester 1</option>
+<option value="2017;S">Acad Yr 2017 Special Term I</option>
+<option value="2017;T">Acad Yr 2017 Special Term II</option>
+<option value="2016;2">Acad Yr 2016 Semester 2</option>
+<option value="2016;1">Acad Yr 2016 Semester 1</option>
+<option value="2016;S">Acad Yr 2016 Special Term I</option>
+<option value="2016;T">Acad Yr 2016 Special Term II</option>
+<option value="2015;2">Acad Yr 2015 Semester 2</option>
+<option value="2015;1">Acad Yr 2015 Semester 1</option>
+<option value="2015;S">Acad Yr 2015 Special Term I</option>
+<option value="2015;T">Acad Yr 2015 Special Term II</option>
+<option value="2014;2">Acad Yr 2014 Semester 2</option>
+<option value="2014;1">Acad Yr 2014 Semester 1</option>
+<option value="2014;S">Acad Yr 2014 Special Term I</option>
+<option value="2014;T">Acad Yr 2014 Special Term II</option>
+</select>
+<br/><br/>
+<select name="r_course_yr" size="20" style="font-family: Arial;font-size: 10pt">
+<option value="">---Select an Option---</option>
+<option value=""> </option>
+<option value="">---Part Time Degree---</option>
+<option value="EEE;;1;P">Electrical &amp; Electronic Engineering(PartTime) Year 1</option>
+<option value="EEE;;2;P">Electrical &amp; Electronic Engineering(PartTime) Year 2</option>
+<option value="EEE;;3;P">Electrical &amp; Electronic Engineering(PartTime) Year 3</option>
+<option value="EEE;;4;P">Electrical &amp; Electronic Engineering(PartTime) Year 4</option>
+<option value="EEE;;5;P">Electrical &amp; Electronic Engineering(PartTime) Year 5</option>
+<option value="ME;;1;P">Mechanical Engineering(PartTime) Year 1</option>
+<option value="ME;;2;P">Mechanical Engineering(PartTime) Year 2</option>
+<option value="ME;;3;P">Mechanical Engineering(PartTime) Year 3</option>
+<option value="ME;;4;P">Mechanical Engineering(PartTime) Year 4</option>
+<option value="ME;;5;P">Mechanical Engineering(PartTime) Year 5</option>
+<option value="CSC;;1;P">Computer Science(PartTime) Year 1</option>
+<option value="CSC;;2;P">Computer Science(PartTime) Year 2</option>
+<option value="CSC;;3;P">Computer Science(PartTime) Year 3</option>
+<option value="CSC;;4;P">Computer Science(PartTime) Year 4</option>
+<option value="COMP;;1;P">Computing(PartTime) Year 1</option>
+<option value="COMP;;2;P">Computing(PartTime) Year 2</option>
+<option value="COMP;;3;P">Computing(PartTime) Year 3</option>
+<option value="COMP;;4;P">Computing(PartTime) Year 4</option>
+<option value=""> </option>
+<option value=""> </option>
+<option value=""> </option>
+</select>
+<script>
+function select_option(form) 
+       {
+        var i=0;
+        var j=0;
+        var ans;
+
+
+         if (form.elements[1].value=="") 
+            {
+              alert("Please select an option.");
+             return; 
+            } form.elements[3].value="Enter Keywords or Course Code"; return true;
+      } 
+     
+</script>
+<input onclick="if (select_option(this.form)) {this.form.action='AUS_SCHEDULE.main_display1';this.form.boption.value='CLoad';submit()}" style="font-size: 10pt" type="button" value="Load Class Schedule"/>
+<br/>
+<br/>
+<script>
+function search_text(form) {
+ 
+  var test = form.elements[3].value;
+  if (test.indexOf("script") >= 0 ||test.indexOf("<") >= 0||test.indexOf(">") >= 0||test.indexOf("{") >= 0||test.indexOf("}") >= 0){
+      alert("Invalid keywords :"+test);
+             return;   
+       }
+    
+         if (form.elements[3].value=="" ||form.elements[3].value=="Enter Keywords or Course Code") 
+            {
+              alert("Please enter keywords.");
+             return; 
+            } form.elements[1].value=""; return true;
+      
+}
+  
+</script>
+<table align="left" border="1" cellpadding="0" cellspacing="0">
+<td bgcolor="#BCBCC8" style="font-size: 10pt">
+<input name="r_subj_code" onfocus="if (this.value == 'Enter Keywords or Course Code') {this.value = '';}" size="50" style="font-size: 10pt" type="text" value="Enter Keywords or Course Code"/>
+<br>
+<input checked="" name="r_search_type" style="font-size: 10pt" type="radio" value="F"/>
+<b>Full</b>
+<input name="r_search_type" style="font-size: 10pt" type="radio" value="P"/>
+<b>Part Time</b>
+<input onclick="if (search_text(this.form)) {this.form.action='AUS_SCHEDULE.main_display1';this.form.boption.value='Search';submit()}" style="font-size: 10pt" type="button" value="Search"/>
+</br></td>
+</table>
+</td>
+<td>
+<b><font color="#000080">Instructions :</font></b>
+<br/>
+<font color="#000080">From the drop-down list of Programme/Study Year, select an option and <br/>click on <b>Load Class Schedule</b> or enter Course Code to search.</font>
+<br/>
+<br/>
+</td>
+</td></tr></table>
+<input name="boption" type="hidden" value="">
+<input name="acadsem" type="hidden" value="2025;S">
+<input name="staff_access" type="hidden" value="false">
+</input></input></input></p> </div>
+<!-- End: Test Content-->
+</div>
+</section>
+<!-- End: Container Landing Single-->
+<!-- Layout: Full container-->
+<!-- End: Container Landing Single-->
+<!-- End Layout: Full container-->
+</div>
+</div>
+<footer class="site-footer"><a class="btn btn-scroll-top btn--grey" href="#top"><span class="label">To Top</span><span class="icon icon-arrow-up"></span></a>
+<div class="container">
+<div class="row">
+<div class="sf_colsIn col-md-3 col-sm-6" data-placeholder-label="Column 1" data-sf-element="Column 1" id="Footer_TD41B707D001_Col00">
+<div>
+<div>
+<div class="site-footer__contact">
+<address>Nanyang Technological University<br/>50 Nanyang Avenue, Singapore 639798<br/>Tel: (65) 67911744</address>
+<address>Novena Campus<br/>11 Mandalay Road, Singapore 308232<br/>Tel: (65) 65138572</address>
+</div>
+<small>(c) 2020 Nanyang Technological University</small>
+</div>
+</div>
+</div>
+<div class="sf_colsIn col-md-4 col-sm-6" data-placeholder-label="Column 2" data-sf-element="Column 2" id="Footer_TD41B707D001_Col01">
+<div class="rte">
+<h3>Contact Us</h3>
+</div>
+<div class="site-footer__nav">
+<p><strong>Please raise a ticket via:</strong></p>
+<nav>
+<ul class="nav flex-column">
+<li class="nav-item"><a class="nav-link" href="https://ntuadminonestop.service-now.com/ntussp" target="blank">One Stop @ SAC</a> for Students</li>
+<li class="nav-item"><a class="nav-link" href="https://servicenowatntu.ntu.edu.sg" target="blank">ServiceNow@NTU</a> for Staff</li>
+<li class="nav-item"><a class="nav-link" href="https://www.ntu.edu.sg/life-at-ntu/internet-account-and-policy/service-desk-form" target="blank">Service Desk Form</a> for NTU Alumni/Public</li>
+</ul>
+</nav>
+</div>
+</div>
+<div class="sf_colsIn col-md-4 col-sm-6" data-placeholder-label="Column 4" data-sf-element="Column 4" id="Footer_TD41B707D001_Col03">
+</div>
+</div>
+</div>
+</footer>
+</div></body></html>
+</form>
+
