@@ -1,0 +1,49 @@
+{
+  "Artificial Intelligence": {
+    "required": [
+      "SC3000",
+      "SC4000"
+    ],
+    "electives": [
+      "SC4001",
+      "SC4002",
+      "SC4061",
+      "SC4020"
+    ]
+  },
+
+  "Cybersecurity": {
+    "required": [
+      "SC3010",
+      "SC4010"
+    ],
+    "electives": [
+      "SC4016",
+      "SC4053",
+      "SC3030"
+    ]
+  },
+
+  "Software Engineering": {
+    "required": [
+      "SC2005",
+      "SC2006"
+    ],
+    "electives": [
+      "SC3040",
+      "SC3020",
+      "SC4050"
+    ]
+  },
+
+  "Data Science": {
+    "required": [
+      "SC4020"
+    ],
+    "electives": [
+      "SC4000",
+      "SC4024",
+      "SC4001"
+    ]
+  }
+}

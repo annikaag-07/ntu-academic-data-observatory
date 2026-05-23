@@ -3,74 +3,58 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import re
 
-
-# NTU schedule page
 URL = "https://wis.ntu.edu.sg/webexe/owa/AUS_SCHEDULE.main_display1"
 
+# ALL relevant prefixes NTU CS students may take
+PREFIXES = [
+    "SC", "CC", "ML", "MH", "MA",
+    "CV", "IE", "BS", "BU",
+    "HW", "HY", "CM", "ES",
+    "HH", "HL", "HP", "HS",
+    "HZ", "HA", "HC", "HE",
+    "BG", "SP", "RE", "DD"
+]
 
-def fetch_course_schedule():
-    # Search for ALL SC courses (full-time)
+all_courses = []
+
+for prefix in PREFIXES:
+    print(f"Scraping {prefix}...")
+
     payload = {
         "acadsem": "2025;1",
-        "r_subj_code": "SC",
+        "r_subj_code": prefix,
         "r_search_type": "F",
         "boption": "Search",
         "staff_access": "false"
     }
 
     response = requests.post(URL, data=payload)
-    response.raise_for_status()
-    return response.text
+    soup = BeautifulSoup(response.text, "html.parser")
 
-
-def parse_courses(html):
-    soup = BeautifulSoup(html, "html.parser")
     text = soup.get_text("\n")
 
-    # Split text into clean lines
-    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    # Match things like:
+    # SC1003 DATA STRUCTURES & ALGORITHMS 3.0
+    pattern = r"([A-Z]{2}\d{4})\s+(.+?)\s+(\d+\.\d)"
 
-    courses = []
+    matches = re.findall(pattern, text)
 
-    i = 0
-    while i < len(lines) - 1:
-        # Match course codes like SC1005, SC2001, CZ3006
-        if re.match(r"^[A-Z]{2,3}\d{4}$", lines[i]):
-            code = lines[i]
-            name = lines[i + 1]
+    for code, name, au in matches:
+        all_courses.append({
+            "course_code": code.strip(),
+            "course_name": name.strip(),
+            "AU": float(au)
+        })
 
-            # Skip bad captures like "INDEX"
-            if name == "INDEX":
-                i += 1
-                continue
+# Remove duplicates
+df = pd.DataFrame(all_courses)
+df = df.drop_duplicates(subset=["course_code"])
 
-            courses.append({
-                "course_code": code,
-                "course_name": name
-            })
+# Sort nicely
+df = df.sort_values("course_code")
 
-            i += 2
-        else:
-            i += 1
+# Save
+df.to_csv("data/courses.csv", index=False)
 
-    return pd.DataFrame(courses)
-
-
-def main():
-    print("Fetching NTU courses...")
-    
-    html = fetch_course_schedule()
-
-    print("Parsing courses...")
-    
-    df = parse_courses(html)
-
-    output_path = "data/courses.csv"
-    df.to_csv(output_path, index=False)
-
-    print(f"Saved to {output_path}")
-    print(df.head())
-
-
-if __name__ == "__main__":
-    main()
+print("\nDone.")
+print(f"Saved {len(df)} courses to data/courses.csv")

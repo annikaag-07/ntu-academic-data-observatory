@@ -1,0 +1,145 @@
+{
+  "Computer Science": {
+    "total_au": 145,
+    "mpe_required": 9,
+    "sc4xxx_min": 4,
+
+    "core": [
+      "SC1003",
+      "SC1004",
+      "SC1005",
+      "SC1006",
+      "SC1007",
+      "SC1008",
+      "SC2000",
+      "SC2001",
+      "SC2002",
+      "SC2005",
+      "SC2006",
+      "SC2008",
+      "SC2203",
+      "SC2207",
+      "SC3099",
+      "SC4079"
+    ],
+
+    "icc": [
+      "CC0001",
+      "CC0003",
+      "CC0006",
+      "CC0007",
+      "CC0015",
+      "ML0004"
+    ]
+  },
+
+  "Computer Science + Business Second Major": {
+    "total_au": 145,
+    "mpe_required": 9,
+    "sc4xxx_min": 4,
+
+    "business_second_major": [
+      "AB1201",
+      "AB1501",
+      "AD1102",
+      "AB1601",
+      "AD2102",
+      "AB1301",
+      "BF2219",
+      "BE2602",
+      "BM2509",
+      "BE1402"
+    ]
+  },
+
+  "Computer Science + Sustainability Second Major": {
+    "total_au": 145,
+    "mpe_required": 9,
+    "sc4xxx_min": 4,
+
+    "sustainability_second_major": [
+      "SUST-C1",
+      "SUST-C2",
+      "SUST-C3",
+      "SUST-C4",
+      "SUST-C5",
+      "SUST-E1",
+      "SUST-E2",
+      "SUST-E3",
+      "SUST-E4",
+      "ES5100"
+    ]
+  },
+
+  "Computer Science + Entrepreneurship Second Major": {
+    "total_au": 140,
+    "mpe_required": 9,
+    "sc4xxx_min": 4,
+
+    "entrepreneurship_second_major": [
+      "ET5211",
+      "ET5212",
+      "ET5213",
+      "ET5214",
+      "ET-E1",
+      "ET-E2",
+      "ET-E3",
+      "ET-E4"
+    ]
+  },
+
+  "Computer Science + Economics Double Degree": {
+    "total_au": 174,
+    "mpe_required": 9,
+    "sc4xxx_min": 4,
+
+    "economics_core": [
+      "HE1001",
+      "HE1002",
+      "HE2001",
+      "HE2002",
+      "HE2003",
+      "HE3001",
+      "HE3002",
+      "HE3003"
+    ]
+  },
+
+  "Data Science & Artificial Intelligence": {
+    "total_au": 142,
+    "mpe_required": 6,
+    "sc4xxx_min": 4,
+
+    "core": [
+      "SC1003",
+      "SC1007",
+      "SC2000",
+      "SC2001",
+      "SC2002",
+      "SC2006",
+      "SC2207",
+      "SC3000",
+      "SC4000",
+      "SC4020",
+      "SC4079"
+    ]
+  },
+
+  "Cybersecurity": {
+    "total_au": 145,
+    "mpe_required": 9,
+    "sc4xxx_min": 4,
+
+    "security_core": [
+      "SC3010",
+      "SC4010",
+      "SC4011",
+      "SC4012",
+      "SC4013",
+      "SC4015",
+      "SC4016",
+      "SC4017",
+      "SC4063"
+    ]
+  }
+}
