@@ -3,19 +3,54 @@ import pandas as pd
 import json
 
 # ====================================================
-# PAGE SETUP
+# PAGE CONFIG
 # ====================================================
 
 st.set_page_config(
     page_title="NTU Degree Navigator",
+    page_icon="🎓",
     layout="wide"
 )
 
-st.title("🎓 NTU Degree Navigator")
-st.write("Plan your NTU degree smarter.")
+# ====================================================
+# CUSTOM CSS
+# ====================================================
+
+st.markdown("""
+<style>
+
+.main {
+    background-color: #0e1117;
+}
+
+.block-container {
+    padding-top: 2rem;
+}
+
+h1, h2, h3 {
+    color: white;
+}
+
+div[data-testid="metric-container"] {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    padding: 15px;
+    border-radius: 15px;
+}
+
+div[data-testid="stProgressBar"] > div > div > div {
+    background-color: #00c2ff;
+}
+
+.st-emotion-cache-1v0mbdj {
+    border-radius: 15px;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 # ====================================================
-# LOAD COURSE DATA
+# LOAD DATA
 # ====================================================
 
 try:
@@ -24,14 +59,33 @@ except:
     st.error("Could not load data/courses.csv")
     st.stop()
 
-# Use ALL courses
+try:
+    with open("data/degree_requirements.json") as f:
+        degree_data = json.load(f)
+except:
+    st.error(
+        "Could not load degree_requirements.json"
+    )
+    st.stop()
+
+try:
+    with open("data/prerequisites.json") as f:
+        prerequisites = json.load(f)
+except:
+    st.error(
+        "Could not load prerequisites.json"
+    )
+    st.stop()
+
+# ====================================================
+# PREP DATA
+# ====================================================
+
 all_df = df.copy()
 
-# Add default AU column if missing
 if "AU" not in all_df.columns:
     all_df["AU"] = 3
 
-# Better display label
 all_df["display"] = (
     all_df["course_code"]
     + " — "
@@ -39,492 +93,274 @@ all_df["display"] = (
 )
 
 # ====================================================
-# LOAD DEGREE REQUIREMENTS
+# SIDEBAR
 # ====================================================
 
-try:
-    with open("data/degree_requirements.json") as f:
-        degree_data = json.load(f)
-except:
-    st.error(
-        "Could not load data/degree_requirements.json"
+with st.sidebar:
+
+    st.title("🎓 NTU Navigator")
+
+    st.markdown("---")
+
+    st.header("👤 Student Profile")
+
+    degree = st.selectbox(
+        "Degree Programme",
+        list(degree_data.keys())
     )
-    st.stop()
 
-# ====================================================
-# LOAD SPECIALIZATION DATA
-# ====================================================
-
-try:
-    with open("data/specializations.json") as f:
-        specializations = json.load(f)
-except:
-    st.error(
-        "Could not load data/specializations.json"
+    year = st.selectbox(
+        "Current Year",
+        ["Y1", "Y2", "Y3", "Y4", "Y5"]
     )
-    st.stop()
 
-# ====================================================
-# STUDENT PROFILE
-# ====================================================
+    semester = st.selectbox(
+        "Current Semester",
+        ["Semester 1", "Semester 2"]
+    )
 
-st.header("👤 Your NTU Profile")
+    career_path = st.selectbox(
+        "Career Interest",
+        [
+            "Artificial Intelligence / ML",
+            "Software Engineering",
+            "Cybersecurity",
+            "Data Science",
+            "Quant / Finance Tech",
+            "Research / Academia"
+        ]
+    )
 
-degree = st.selectbox(
-    "Select your degree programme",
-    list(degree_data.keys())
-)
-
-year = st.selectbox(
-    "Current study year",
-    ["Y1", "Y2", "Y3", "Y4", "Y5"]
-)
-
-# Load selected degree requirements
 requirements = degree_data[degree]
 
 # ====================================================
-# LOAD PREREQUISITES
+# TITLE
 # ====================================================
 
-try:
-    with open("data/prerequisites.json") as f:
-        prerequisites = json.load(f)
-except:
-    st.error(
-        "Could not load data/prerequisites.json"
+st.title("🎓 NTU Degree Navigator")
+st.caption(
+    "Smart academic planning for NTU students"
+)
+
+# ====================================================
+# TABS
+# ====================================================
+
+tab1, tab2, tab3, tab4 = st.tabs([
+    "📊 Dashboard",
+    "🧠 Career Explorer",
+    "📚 Degree Planner",
+    "🔍 Course Browser"
+])
+
+# ====================================================
+# TAB 1 — DASHBOARD
+# ====================================================
+
+with tab1:
+
+    st.header("📊 Academic Dashboard")
+
+    st.subheader("✅ Completed Courses")
+
+    completed_display = st.multiselect(
+        "Select completed modules",
+        options=all_df["display"].tolist()
     )
-    st.stop()
 
-# ====================================================
-# COMPLETED COURSES
-# ====================================================
-
-st.header("✅ Mark Completed Courses")
-
-completed_display = st.multiselect(
-    "Completed courses",
-    options=all_df["display"].tolist()
-)
-
-completed_codes = [
-    item.split(" — ")[0]
-    for item in completed_display
-]
-
-completed_df = all_df[
-    all_df["course_code"].isin(completed_codes)
-]
-
-completed_au = completed_df["AU"].sum()
-
-st.write(f"### Completed AU: {completed_au}")
-
-# ====================================================
-# DEGREE PROGRESS
-# ====================================================
-
-st.header("📊 Degree Progress")
-
-degree_requirement = requirements["total_au"]
-
-progress = min(
-    completed_au / degree_requirement,
-    1.0
-)
-
-st.write(
-    f"### Total AU Progress: "
-    f"{completed_au}/{degree_requirement}"
-)
-
-st.progress(progress)
-
-# ====================================================
-# CURRICULUM TRACKER
-# ====================================================
-
-st.header("📚 Curriculum Checklist")
-
-for category, value in requirements.items():
-
-    # Skip non-list items
-    if not isinstance(value, list):
-        continue
-
-    completed = [
-        code for code in value
-        if code in completed_codes
+    completed_codes = [
+        item.split(" — ")[0]
+        for item in completed_display
     ]
 
-    remaining = [
-        code for code in value
-        if code not in completed_codes
+    completed_df = all_df[
+        all_df["course_code"].isin(completed_codes)
     ]
 
-    st.subheader(
-        category.replace("_", " ").title()
+    completed_au = completed_df["AU"].sum()
+
+    total_required = requirements["total_au"]
+
+    progress = min(
+        completed_au / total_required,
+        1.0
     )
 
-    st.write(
-        f"Completed: "
-        f"{len(completed)}/{len(value)}"
+    remaining_au = (
+        total_required - completed_au
     )
 
-    category_progress = (
-        len(completed) / len(value)
-        if len(value) > 0
-        else 0
-    )
+    # ===============================
+    # METRICS
+    # ===============================
 
-    st.progress(category_progress)
+    col1, col2, col3 = st.columns(3)
 
-    # Completed list
-    if completed:
-        st.success(
-            "Completed: "
-            + ", ".join(completed)
+    with col1:
+        st.metric(
+            "Completed AU",
+            completed_au
         )
 
-    # Remaining list
-    if remaining:
-        st.warning(
-            "Remaining: "
-            + ", ".join(remaining)
+    with col2:
+        st.metric(
+            "Remaining AU",
+            remaining_au
         )
+
+    with col3:
+        st.metric(
+            "Graduation Progress",
+            f"{round(progress * 100)}%"
+        )
+
+    st.progress(progress)
+
+    # ===============================
+    # CURRICULUM TRACKER
+    # ===============================
+
+    st.markdown("---")
+
+    st.subheader("📚 Curriculum Progress")
+
+    for category, value in requirements.items():
+
+        if not isinstance(value, list):
+            continue
+
+        completed = [
+            code for code in value
+            if code in completed_codes
+        ]
+
+        remaining = [
+            code for code in value
+            if code not in completed_codes
+        ]
+
+        with st.container(border=True):
+
+            st.markdown(
+                f"### {category.replace('_', ' ').title()}"
+            )
+
+            category_progress = (
+                len(completed) / len(value)
+                if len(value) > 0
+                else 0
+            )
+
+            st.progress(category_progress)
+
+            st.write(
+                f"Completed: "
+                f"{len(completed)}/{len(value)}"
+            )
+
+            if remaining:
+                st.warning(
+                    "Remaining: "
+                    + ", ".join(remaining)
+                )
+            else:
+                st.success(
+                    "All requirements completed!"
+                )
+
+    # ===============================
+    # SMART RECOMMENDATIONS
+    # ===============================
+
+    st.markdown("---")
+
+    st.header("🧠 Recommended Next Courses")
+
+    recommended = []
+
+    # =================================================
+    # AI / ML
+    # =================================================
+
+    if career_path == "Artificial Intelligence / ML":
+
+        target_courses = [
+            "SC3000",
+            "SC4000",
+            "SC4001",
+            "SC4002",
+            "SC4061",
+            "SC4020"
+        ]
+
+    # =================================================
+    # SOFTWARE ENGINEERING
+    # =================================================
+
+    elif career_path == "Software Engineering":
+
+        target_courses = [
+            "SC2005",
+            "SC2006",
+            "SC2207",
+            "SC3020",
+            "SC3040"
+        ]
+
+    # =================================================
+    # CYBERSECURITY
+    # =================================================
+
+    elif career_path == "Cybersecurity":
+
+        target_courses = [
+            "SC3010",
+            "SC4010",
+            "SC4016",
+            "SC4053"
+        ]
+
+    # =================================================
+    # DATA SCIENCE
+    # =================================================
+
+    elif career_path == "Data Science":
+
+        target_courses = [
+            "SC4020",
+            "SC4024",
+            "SC4000"
+        ]
+
+    # =================================================
+    # QUANT
+    # =================================================
+
+    elif career_path == "Quant / Finance Tech":
+
+        target_courses = [
+            "SC2000",
+            "SC4020",
+            "SC4000"
+        ]
+
+    # =================================================
+    # RESEARCH
+    # =================================================
+
     else:
-        st.success("All completed!")
 
-# ====================================================
-# CAREER & SPECIALIZATION EXPLORER
-# ====================================================
+        target_courses = [
+            "SC4001",
+            "SC4002",
+            "SC4061"
+        ]
 
-st.header("🚀 Career & Specialization Explorer")
+    # =================================================
+    # CHECK ELIGIBILITY
+    # =================================================
 
-career_path = st.selectbox(
-    "Which path are you interested in?",
-    [
-        "Artificial Intelligence / ML",
-        "Software Engineering",
-        "Cybersecurity",
-        "Data Science",
-        "Quant / Finance Tech",
-        "Research / Academia"
-    ]
-)
-
-# ====================================================
-# AI / ML
-# ====================================================
-
-if career_path == "Artificial Intelligence / ML":
-
-    st.subheader("🧠 AI / ML Path")
-
-    st.write(
-        """
-        Best for students who enjoy:
-        - Math
-        - Coding
-        - Data
-        - Building intelligent systems
-        """
-    )
-
-    st.subheader("💼 Typical Careers")
-
-    st.write("""
-    - ML Engineer
-    - AI Engineer
-    - Data Scientist
-    - NLP Engineer
-    - Computer Vision Engineer
-    - AI Researcher
-    """)
-
-    st.subheader("📚 Recommended NTU Courses")
-
-    st.write("""
-    - SC3000 Artificial Intelligence
-    - SC4000 Machine Learning
-    - SC4001 Neural Network & Deep Learning
-    - SC4002 Natural Language Processing
-    - SC4061 Computer Vision
-    - SC4020 Data Analytics & Mining
-    """)
-
-    st.subheader("🛠️ Skills To Build")
-
-    st.write("""
-    - Python
-    - PyTorch / TensorFlow
-    - Data Structures & Algorithms
-    - Math & Statistics
-    - SQL
-    - Model Deployment
-    """)
-
-    st.subheader("📈 Internship Roles")
-
-    st.write("""
-    - AI Intern
-    - Data Science Intern
-    - ML Engineer Intern
-    - Analytics Intern
-    """)
-
-# ====================================================
-# SOFTWARE ENGINEERING
-# ====================================================
-
-elif career_path == "Software Engineering":
-
-    st.subheader("💻 Software Engineering Path")
-
-    st.write("""
-    Best for students who enjoy:
-    - Building applications
-    - System design
-    - Backend/frontend engineering
-    - Product development
-    """)
-
-    st.subheader("💼 Typical Careers")
-
-    st.write("""
-    - Software Engineer
-    - Backend Engineer
-    - Full Stack Developer
-    - Platform Engineer
-    - Mobile Developer
-    """)
-
-    st.subheader("📚 Recommended NTU Courses")
-
-    st.write("""
-    - SC2005 Operating Systems
-    - SC2006 Software Engineering
-    - SC2207 Introduction to Databases
-    - SC3020 Database Systems
-    - SC3040 Advanced Software Engineering
-    - SC3030 Advanced Computer Networks
-    """)
-
-    st.subheader("🛠️ Skills To Build")
-
-    st.write("""
-    - Full-stack development
-    - System design
-    - APIs
-    - Cloud computing
-    - Git/GitHub
-    - React / Node.js
-    """)
-
-    st.subheader("📈 Internship Roles")
-
-    st.write("""
-    - SWE Intern
-    - Backend Intern
-    - Full Stack Intern
-    - Platform Engineering Intern
-    """)
-
-# ====================================================
-# CYBERSECURITY
-# ====================================================
-
-elif career_path == "Cybersecurity":
-
-    st.subheader("🔐 Cybersecurity Path")
-
-    st.write("""
-    Best for students interested in:
-    - Security
-    - Hacking
-    - Networks
-    - Cryptography
-    """)
-
-    st.subheader("💼 Typical Careers")
-
-    st.write("""
-    - Security Engineer
-    - Penetration Tester
-    - SOC Analyst
-    - Threat Intelligence Analyst
-    """)
-
-    st.subheader("📚 Recommended NTU Courses")
-
-    st.write("""
-    - SC3010 Computer Security
-    - SC4010 Applied Cryptography
-    - SC4016 Cyber Threat Intelligence
-    - SC4053 Blockchain Technology
-    """)
-
-    st.subheader("🛠️ Skills To Build")
-
-    st.write("""
-    - Linux
-    - Networking
-    - Cryptography
-    - Web security
-    - CTFs
-    """)
-
-# ====================================================
-# DATA SCIENCE
-# ====================================================
-
-elif career_path == "Data Science":
-
-    st.subheader("📊 Data Science Path")
-
-    st.write("""
-    Strong fit for students who enjoy:
-    - Statistics
-    - Analytics
-    - Business insights
-    - Data storytelling
-    """)
-
-    st.subheader("📚 Recommended NTU Courses")
-
-    st.write("""
-    - SC4020 Data Analytics & Mining
-    - SC4024 Data Visualisation
-    - SC4000 Machine Learning
-    - MH1812 Discrete Mathematics
-    """)
-
-    st.subheader("💼 Typical Careers")
-
-    st.write("""
-    - Data Scientist
-    - Data Analyst
-    - BI Analyst
-    - Analytics Consultant
-    """)
-
-# ====================================================
-# QUANT
-# ====================================================
-
-elif career_path == "Quant / Finance Tech":
-
-    st.subheader("📈 Quant / Finance Tech")
-
-    st.write("""
-    Great for students who enjoy:
-    - Math
-    - Statistics
-    - Finance
-    - Algorithms
-    """)
-
-    st.subheader("📚 Recommended NTU Courses")
-
-    st.write("""
-    - SC2000 Probability & Statistics
-    - MH1812 Discrete Mathematics
-    - SC4020 Data Analytics
-    - HE courses
-    """)
-
-    st.subheader("💼 Careers")
-
-    st.write("""
-    - Quant Analyst
-    - Quant Developer
-    - FinTech Engineer
-    - Trading Systems Engineer
-    """)
-
-# ====================================================
-# RESEARCH
-# ====================================================
-
-elif career_path == "Research / Academia":
-
-    st.subheader("🔬 Research & Academia")
-
-    st.write("""
-    Best for students interested in:
-    - Deep technical work
-    - Publishing papers
-    - Masters / PhD
-    - Advanced AI systems
-    """)
-
-    st.subheader("📚 Recommended NTU Courses")
-
-    st.write("""
-    - SC4001 Neural Networks
-    - SC4002 NLP
-    - SC4061 Computer Vision
-    - Advanced math/statistics modules
-    """)
-
-    st.subheader("💼 Pathways")
-
-    st.write("""
-    - Undergraduate research
-    - PhD track
-    - Research labs
-    - AI research internships
-    """)
-
-# ====================================================
-# SMART SEMESTER RECOMMENDER
-# ====================================================
-
-st.header("🧠 Recommended Next Courses")
-
-recommended = []
-
-# AI PATH
-if career_path == "Artificial Intelligence / ML":
-
-    ai_courses = [
-        "SC3000",
-        "SC4000",
-        "SC4001",
-        "SC4002",
-        "SC4061",
-        "SC4020"
-    ]
-
-    for course in ai_courses:
-
-        # skip completed
-        if course in completed_codes:
-            continue
-
-        prereqs = prerequisites.get(course, [])
-
-        # check prereqs
-        eligible = all(
-            prereq in completed_codes
-            for prereq in prereqs
-        )
-
-        if eligible:
-            recommended.append(course)
-
-# SOFTWARE PATH
-elif career_path == "Software Engineering":
-
-    swe_courses = [
-        "SC2005",
-        "SC2006",
-        "SC2207",
-        "SC3020",
-        "SC3040"
-    ]
-
-    for course in swe_courses:
+    for course in target_courses:
 
         if course in completed_codes:
             continue
@@ -539,153 +375,288 @@ elif career_path == "Software Engineering":
         if eligible:
             recommended.append(course)
 
-# CYBERSECURITY
-elif career_path == "Cybersecurity":
+    # =================================================
+    # DISPLAY RECOMMENDATIONS
+    # =================================================
 
-    cyber_courses = [
-        "SC3010",
-        "SC4010",
-        "SC4016",
-        "SC4053"
+    if recommended:
+
+        st.success(
+            "Recommended based on your profile"
+        )
+
+        for course in recommended:
+
+            row = all_df[
+                all_df["course_code"] == course
+            ]
+
+            if not row.empty:
+
+                name = row.iloc[0]["course_name"]
+
+                with st.container(border=True):
+
+                    st.markdown(
+                        f"### {course}"
+                    )
+
+                    st.write(name)
+
+                    prereqs = prerequisites.get(
+                        course,
+                        []
+                    )
+
+                    if prereqs:
+                        st.caption(
+                            "Prerequisites: "
+                            + ", ".join(prereqs)
+                        )
+
+    else:
+
+        st.warning(
+            "No eligible recommendations yet."
+        )
+
+# ====================================================
+# TAB 2 — CAREER EXPLORER
+# ====================================================
+
+with tab2:
+
+    st.header("🚀 Career Explorer")
+
+    if career_path == "Artificial Intelligence / ML":
+
+        st.subheader("🧠 AI / ML")
+
+        with st.expander("💼 Career Roles"):
+
+            st.write("""
+            - ML Engineer
+            - AI Engineer
+            - Data Scientist
+            - NLP Engineer
+            - Computer Vision Engineer
+            """)
+
+        with st.expander("📚 Recommended NTU Courses"):
+
+            st.write("""
+            - SC3000 Artificial Intelligence
+            - SC4000 Machine Learning
+            - SC4001 Deep Learning
+            - SC4002 NLP
+            - SC4061 Computer Vision
+            """)
+
+        with st.expander("🛠️ Skills To Learn"):
+
+            st.write("""
+            - Python
+            - PyTorch
+            - TensorFlow
+            - SQL
+            - Statistics
+            - Model Deployment
+            """)
+
+    elif career_path == "Software Engineering":
+
+        st.subheader("💻 Software Engineering")
+
+        with st.expander("💼 Career Roles"):
+
+            st.write("""
+            - Software Engineer
+            - Backend Engineer
+            - Full Stack Developer
+            - Platform Engineer
+            """)
+
+        with st.expander("📚 Recommended NTU Courses"):
+
+            st.write("""
+            - SC2005 Operating Systems
+            - SC2006 Software Engineering
+            - SC2207 Databases
+            - SC3020 Database Systems
+            """)
+
+        with st.expander("🛠️ Skills To Learn"):
+
+            st.write("""
+            - React
+            - Node.js
+            - APIs
+            - Git/GitHub
+            - Cloud Computing
+            """)
+
+    elif career_path == "Cybersecurity":
+
+        st.subheader("🔐 Cybersecurity")
+
+        with st.expander("💼 Career Roles"):
+
+            st.write("""
+            - Security Engineer
+            - SOC Analyst
+            - Threat Analyst
+            - Penetration Tester
+            """)
+
+        with st.expander("📚 Recommended NTU Courses"):
+
+            st.write("""
+            - SC3010 Computer Security
+            - SC4010 Cryptography
+            - SC4016 Threat Intelligence
+            """)
+
+    elif career_path == "Data Science":
+
+        st.subheader("📊 Data Science")
+
+        with st.expander("💼 Career Roles"):
+
+            st.write("""
+            - Data Scientist
+            - Data Analyst
+            - BI Analyst
+            """)
+
+        with st.expander("📚 Recommended Courses"):
+
+            st.write("""
+            - SC4020 Data Analytics
+            - SC4024 Data Visualisation
+            - SC4000 Machine Learning
+            """)
+
+# ====================================================
+# TAB 3 — DEGREE PLANNER
+# ====================================================
+
+with tab3:
+
+    st.header("📚 Semester Planning")
+
+    planned_display = st.multiselect(
+        "Select planned courses",
+        options=all_df["display"].tolist()
+    )
+
+    planned_codes = [
+        item.split(" — ")[0]
+        for item in planned_display
     ]
 
-    for course in cyber_courses:
-
-        if course in completed_codes:
-            continue
-
-        prereqs = prerequisites.get(course, [])
-
-        eligible = all(
-            prereq in completed_codes
-            for prereq in prereqs
-        )
-
-        if eligible:
-            recommended.append(course)
-
-# DATA SCIENCE
-elif career_path == "Data Science":
-
-    ds_courses = [
-        "SC4020",
-        "SC4024",
-        "SC4000"
+    planned_df = all_df[
+        all_df["course_code"].isin(planned_codes)
     ]
 
-    for course in ds_courses:
+    planned_au = planned_df["AU"].sum()
 
-        if course in completed_codes:
-            continue
+    st.metric(
+        "Planned AU",
+        planned_au
+    )
 
-        prereqs = prerequisites.get(course, [])
+    # ===============================
+    # OVERLOAD WARNINGS
+    # ===============================
 
-        eligible = all(
-            prereq in completed_codes
-            for prereq in prereqs
+    if planned_au > 24:
+
+        st.error(
+            "⚠️ Extremely heavy semester."
         )
 
-        if eligible:
-            recommended.append(course)
+    elif planned_au > 18:
 
-# SHOW RESULTS
-
-if recommended:
-
-    st.success(
-        "Recommended next semester courses:"
-    )
-
-    for course in recommended:
-        st.write(f"✅ {course}")
-
-else:
-
-    st.warning(
-        "No eligible recommendations found yet."
-    )
-# ====================================================
-# FUTURE COURSE PLANNING
-# ====================================================
-
-st.header("🗓️ Plan Future Courses")
-
-planned_display = st.multiselect(
-    "Select planned future courses",
-    options=all_df["display"].tolist()
-)
-
-planned_codes = [
-    item.split(" — ")[0]
-    for item in planned_display
-]
-
-planned_df = all_df[
-    all_df["course_code"].isin(planned_codes)
-]
-
-planned_au = planned_df["AU"].sum()
-
-st.write(f"### Planned AU: {planned_au}")
-
-# Semester load warning
-if planned_au > 24:
-    st.error(
-        "⚠️ Heavy overload semester detected!"
-    )
-
-elif planned_au > 18:
-    st.warning(
-        "⚠️ Moderately heavy semester load."
-    )
-
-else:
-    st.success(
-        "✅ Reasonable semester workload."
-    )
-
-# ====================================================
-# SHOW SELECTED COURSE DETAILS
-# ====================================================
-
-st.header("📖 Selected Course Details")
-
-display_df = pd.concat(
-    [completed_df, planned_df]
-).drop_duplicates()
-
-display_df = display_df.reset_index(drop=True)
-display_df.index += 1
-
-st.dataframe(display_df)
-
-# ====================================================
-# BROWSE ALL COURSES
-# ====================================================
-
-st.header("🔍 Browse All NTU Courses")
-
-search = st.text_input(
-    "Search by course code or course name"
-)
-
-filtered = all_df.copy()
-
-if search:
-
-    filtered = filtered[
-        filtered["course_code"].str.contains(
-            search,
-            case=False
+        st.warning(
+            "⚠️ Moderately heavy semester."
         )
-        |
-        filtered["course_name"].str.contains(
-            search,
-            case=False
+
+    else:
+
+        st.success(
+            "✅ Reasonable workload."
         )
-    ]
 
-filtered = filtered.reset_index(drop=True)
-filtered.index += 1
+    # ===============================
+    # PREREQUISITE CHECKER
+    # ===============================
 
-st.dataframe(filtered)
+    st.markdown("---")
+
+    st.subheader("🚨 Invalid Plan Detection")
+
+    invalid = False
+
+    for course in planned_codes:
+
+        prereqs = prerequisites.get(
+            course,
+            []
+        )
+
+        missing = [
+            prereq for prereq in prereqs
+            if prereq not in completed_codes
+        ]
+
+        if missing:
+
+            invalid = True
+
+            st.error(
+                f"{course} missing prerequisites: "
+                + ", ".join(missing)
+            )
+
+    if not invalid:
+
+        st.success(
+            "All planned courses satisfy prerequisites!"
+        )
+
+# ====================================================
+# TAB 4 — COURSE BROWSER
+# ====================================================
+
+with tab4:
+
+    st.header("🔍 Browse NTU Courses")
+
+    search = st.text_input(
+        "Search course code or course name"
+    )
+
+    filtered = all_df.copy()
+
+    if search:
+
+        filtered = filtered[
+            filtered["course_code"].str.contains(
+                search,
+                case=False
+            )
+            |
+            filtered["course_name"].str.contains(
+                search,
+                case=False
+            )
+        ]
+
+    filtered = filtered.reset_index(drop=True)
+
+    filtered.index += 1
+
+    st.dataframe(
+        filtered,
+        use_container_width=True
+    )
