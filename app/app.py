@@ -84,6 +84,19 @@ year = st.selectbox(
 requirements = degree_data[degree]
 
 # ====================================================
+# LOAD PREREQUISITES
+# ====================================================
+
+try:
+    with open("data/prerequisites.json") as f:
+        prerequisites = json.load(f)
+except:
+    st.error(
+        "Could not load data/prerequisites.json"
+    )
+    st.stop()
+
+# ====================================================
 # COMPLETED COURSES
 # ====================================================
 
@@ -463,6 +476,134 @@ elif career_path == "Research / Academia":
     - AI research internships
     """)
 
+# ====================================================
+# SMART SEMESTER RECOMMENDER
+# ====================================================
+
+st.header("🧠 Recommended Next Courses")
+
+recommended = []
+
+# AI PATH
+if career_path == "Artificial Intelligence / ML":
+
+    ai_courses = [
+        "SC3000",
+        "SC4000",
+        "SC4001",
+        "SC4002",
+        "SC4061",
+        "SC4020"
+    ]
+
+    for course in ai_courses:
+
+        # skip completed
+        if course in completed_codes:
+            continue
+
+        prereqs = prerequisites.get(course, [])
+
+        # check prereqs
+        eligible = all(
+            prereq in completed_codes
+            for prereq in prereqs
+        )
+
+        if eligible:
+            recommended.append(course)
+
+# SOFTWARE PATH
+elif career_path == "Software Engineering":
+
+    swe_courses = [
+        "SC2005",
+        "SC2006",
+        "SC2207",
+        "SC3020",
+        "SC3040"
+    ]
+
+    for course in swe_courses:
+
+        if course in completed_codes:
+            continue
+
+        prereqs = prerequisites.get(course, [])
+
+        eligible = all(
+            prereq in completed_codes
+            for prereq in prereqs
+        )
+
+        if eligible:
+            recommended.append(course)
+
+# CYBERSECURITY
+elif career_path == "Cybersecurity":
+
+    cyber_courses = [
+        "SC3010",
+        "SC4010",
+        "SC4016",
+        "SC4053"
+    ]
+
+    for course in cyber_courses:
+
+        if course in completed_codes:
+            continue
+
+        prereqs = prerequisites.get(course, [])
+
+        eligible = all(
+            prereq in completed_codes
+            for prereq in prereqs
+        )
+
+        if eligible:
+            recommended.append(course)
+
+# DATA SCIENCE
+elif career_path == "Data Science":
+
+    ds_courses = [
+        "SC4020",
+        "SC4024",
+        "SC4000"
+    ]
+
+    for course in ds_courses:
+
+        if course in completed_codes:
+            continue
+
+        prereqs = prerequisites.get(course, [])
+
+        eligible = all(
+            prereq in completed_codes
+            for prereq in prereqs
+        )
+
+        if eligible:
+            recommended.append(course)
+
+# SHOW RESULTS
+
+if recommended:
+
+    st.success(
+        "Recommended next semester courses:"
+    )
+
+    for course in recommended:
+        st.write(f"✅ {course}")
+
+else:
+
+    st.warning(
+        "No eligible recommendations found yet."
+    )
 # ====================================================
 # FUTURE COURSE PLANNING
 # ====================================================
