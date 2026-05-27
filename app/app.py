@@ -63,18 +63,28 @@ try:
     with open("data/degree_requirements.json") as f:
         degree_data = json.load(f)
 except:
-    st.error(
-        "Could not load degree_requirements.json"
-    )
+    st.error("Could not load degree_requirements.json")
     st.stop()
 
 try:
     with open("data/prerequisites.json") as f:
         prerequisites = json.load(f)
 except:
-    st.error(
-        "Could not load prerequisites.json"
-    )
+    st.error("Could not load prerequisites.json")
+    st.stop()
+
+try:
+    with open("data/roadmaps.json") as f:
+        roadmaps = json.load(f)
+except:
+    st.error("Could not load roadmaps.json")
+    st.stop()
+
+try:
+    with open("data/specializations.json") as f:
+        specializations = json.load(f)
+except:
+    st.error("Could not load specializations.json")
     st.stop()
 
 # ====================================================
@@ -138,6 +148,7 @@ requirements = degree_data[degree]
 # ====================================================
 
 st.title("🎓 NTU Degree Navigator")
+
 st.caption(
     "Smart academic planning for NTU students"
 )
@@ -190,9 +201,9 @@ with tab1:
         total_required - completed_au
     )
 
-    # ===============================
+    # ====================================================
     # METRICS
-    # ===============================
+    # ====================================================
 
     col1, col2, col3 = st.columns(3)
 
@@ -216,9 +227,9 @@ with tab1:
 
     st.progress(progress)
 
-    # ===============================
+    # ====================================================
     # CURRICULUM TRACKER
-    # ===============================
+    # ====================================================
 
     st.markdown("---")
 
@@ -259,18 +270,78 @@ with tab1:
             )
 
             if remaining:
+
                 st.warning(
                     "Remaining: "
                     + ", ".join(remaining)
                 )
+
             else:
+
                 st.success(
                     "All requirements completed!"
                 )
 
-    # ===============================
+    # ====================================================
+    # OFFICIAL NTU ROADMAP
+    # ====================================================
+
+    st.markdown("---")
+
+    st.header("📚 Official NTU Semester Roadmap")
+
+    semester_key = (
+        year
+        + semester.replace("Semester ", "S")
+    )
+
+    degree_roadmap = roadmaps.get(
+        degree,
+        {}
+    )
+
+    recommended_sem = degree_roadmap.get(
+        semester_key,
+        []
+    )
+
+    if recommended_sem:
+
+        st.success(
+            f"Recommended modules for {semester_key}"
+        )
+
+        for course in recommended_sem:
+
+            row = all_df[
+                all_df["course_code"] == course
+            ]
+
+            if not row.empty:
+
+                name = row.iloc[0]["course_name"]
+
+                with st.container(border=True):
+
+                    st.markdown(f"### {course}")
+
+                    st.write(name)
+
+                    if course in completed_codes:
+
+                        st.success(
+                            "✅ Already completed"
+                        )
+
+    else:
+
+        st.warning(
+            "No roadmap available yet."
+        )
+
+    # ====================================================
     # SMART RECOMMENDATIONS
-    # ===============================
+    # ====================================================
 
     st.markdown("---")
 
@@ -278,9 +349,9 @@ with tab1:
 
     recommended = []
 
-    # =================================================
-    # AI / ML
-    # =================================================
+    # ====================================================
+    # CAREER TRACK COURSE TARGETS
+    # ====================================================
 
     if career_path == "Artificial Intelligence / ML":
 
@@ -293,10 +364,6 @@ with tab1:
             "SC4020"
         ]
 
-    # =================================================
-    # SOFTWARE ENGINEERING
-    # =================================================
-
     elif career_path == "Software Engineering":
 
         target_courses = [
@@ -307,10 +374,6 @@ with tab1:
             "SC3040"
         ]
 
-    # =================================================
-    # CYBERSECURITY
-    # =================================================
-
     elif career_path == "Cybersecurity":
 
         target_courses = [
@@ -320,10 +383,6 @@ with tab1:
             "SC4053"
         ]
 
-    # =================================================
-    # DATA SCIENCE
-    # =================================================
-
     elif career_path == "Data Science":
 
         target_courses = [
@@ -331,10 +390,6 @@ with tab1:
             "SC4024",
             "SC4000"
         ]
-
-    # =================================================
-    # QUANT
-    # =================================================
 
     elif career_path == "Quant / Finance Tech":
 
@@ -344,10 +399,6 @@ with tab1:
             "SC4000"
         ]
 
-    # =================================================
-    # RESEARCH
-    # =================================================
-
     else:
 
         target_courses = [
@@ -356,9 +407,9 @@ with tab1:
             "SC4061"
         ]
 
-    # =================================================
+    # ====================================================
     # CHECK ELIGIBILITY
-    # =================================================
+    # ====================================================
 
     for course in target_courses:
 
@@ -375,9 +426,9 @@ with tab1:
         if eligible:
             recommended.append(course)
 
-    # =================================================
+    # ====================================================
     # DISPLAY RECOMMENDATIONS
-    # =================================================
+    # ====================================================
 
     if recommended:
 
@@ -397,9 +448,7 @@ with tab1:
 
                 with st.container(border=True):
 
-                    st.markdown(
-                        f"### {course}"
-                    )
+                    st.markdown(f"### {course}")
 
                     st.write(name)
 
@@ -409,6 +458,7 @@ with tab1:
                     )
 
                     if prereqs:
+
                         st.caption(
                             "Prerequisites: "
                             + ", ".join(prereqs)
@@ -565,9 +615,9 @@ with tab3:
         planned_au
     )
 
-    # ===============================
+    # ====================================================
     # OVERLOAD WARNINGS
-    # ===============================
+    # ====================================================
 
     if planned_au > 24:
 
@@ -587,9 +637,9 @@ with tab3:
             "✅ Reasonable workload."
         )
 
-    # ===============================
+    # ====================================================
     # PREREQUISITE CHECKER
-    # ===============================
+    # ====================================================
 
     st.markdown("---")
 
